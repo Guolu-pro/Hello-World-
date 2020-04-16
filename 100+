@@ -1,0 +1,145 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct
+{
+	int elem[1000];
+	int front,rear;//队头和队尾
+	int name;//所办业务名称
+}SqQueue;
+void InitQueue(SqQueue &Q)//队列的建立
+{
+	Q.front=Q.rear=0;
+}
+int QueueLength(SqQueue Q)//队列长度
+{
+	int len;//定义队列长度
+	if(Q.front==Q.rear) len=0;//队列初始化
+	else len=Q.rear-Q.front-1;
+	return len;//返回队列长度值
+}
+void EnQueue(SqQueue &Q,int e)//进队函数
+{
+	Q.rear=Q.rear+1;
+	Q.elem[Q.rear]=e;
+}
+void DeQueue(SqQueue &Q,int &e)//出队函数
+{
+	Q.front=Q.front+1;
+	e=Q.elem[Q.front];
+}
+void menu1(int &i)//菜单1：给各个窗口设置功能
+{
+	printf("\n			                        1.手机业务\n");
+	printf("\n			                        2.宽带业务\n");
+	printf("\n			                        3.全部业务\n");
+	printf("\n	                                     请为窗口选择工作业务: \n");
+	scanf("%d",&i);
+}
+void menu2(int &i)//菜单2：顾客选择所需功能
+{
+	printf("\n\n*********************************************^-^欢迎使用排队系统^-^********************************************\n");
+	printf("\n		                        	1.取号功能\n");
+	printf("\n			                        2.查询功能\n");
+	printf("\n			                        3.办理结束\n");
+	printf("\n	                                        请选择: \n");
+	scanf("%d",&i);
+}
+void menu3(int &i)//菜单3：顾客选择所需办理的业务
+{
+	printf("\n\n*********************************************^-^欢迎使用排队系统^-^********************************************\n");
+	printf("\n			                        1.手机业务\n");
+	printf("\n			                        2.宽带业务\n");
+	printf("\n	                                        请您选择业务: \n");
+	scanf("%d",&i);
+}
+void Creat(SqQueue *Q,int &n)
+{
+	int i,x;
+	printf("\n\n*********************************************^-^欢迎使用排队系统^-^********************************************\n");
+	printf("\n                                               您要开通几个窗口\n");
+	scanf("%d",&n);//输入开通窗口个数
+	system("pause");
+	system("cls");
+	for(i=0;i<n;i++)
+	{
+		printf("                                             请为窗口%d选择工作业务\n",i+1);
+		InitQueue(Q[i]);
+		menu1(x);//给窗口设置功能
+		switch(x)
+		{
+		case 1:{Q[i].name=1;break;}
+		case 2:{Q[i].name=2;break;}
+		case 3:{Q[i].name=3;break;}
+		}
+		system("pause");
+	    system("cls");
+	}
+}
+void xuan3(SqQueue *Q,int x,int n)//取号功能，x为所需办理业务名称，n为开通窗口数量
+{
+	int i;
+	int m=-1;//记录人数比较少的窗口号
+	for(i=0;i<n;i++)
+	{
+		if(Q[i].name==x||Q[i].name==3)
+		{
+			if(m==-1) 
+			{
+				m=i;
+			}
+			else if(QueueLength(Q[m])>QueueLength(Q[i]))
+			{
+				 m=i;
+			}
+		}
+	}
+	EnQueue(Q[m],1);
+	printf("                     为您服务的窗口为第%d窗口，您的排队号为%d，您前面还有%d个人，请您耐心等待。\n",m+1,Q[m].rear,QueueLength(Q[m]));
+}
+void xuan1(SqQueue *Q,int n)//取号功能
+{
+	system("pause");
+	system("cls");
+	int choice;
+    menu3(choice);
+	switch(choice)
+		{
+		case 1:{xuan3(Q,1,n);break;}
+		case 2:{xuan3(Q,2,n);break;}
+		}
+}
+void xuan4(SqQueue *Q)//结束办理
+{
+	int n=0,x;
+    printf("                                            请输入为您服务的窗口\n");
+	scanf("%d",&n);
+	if(Q[n-1].front!=Q[n-1].rear) 
+		DeQueue(Q[n-1],x);
+	printf("                                            非常感谢您的配合！\n");
+}
+void xuan2(SqQueue *Q)//查询功能
+{
+	int n;
+	printf("                                            请输入为您所要查询的窗口\n");
+	scanf("%d",&n);
+	printf("\n\n                                        此时客户排队号为%d，目前还有%d个客户在等待\n",Q[n-1].front+1,QueueLength(Q[n-1]));
+}
+int main()
+{
+	int choice,n;
+	SqQueue Q[10];
+	Creat(Q,n);
+	while(1)
+	{
+	menu2(choice);
+	switch(choice)//客户选择取号、查询或结束办理功能
+		{
+		case 1:{xuan1(Q,n);break;}
+		case 2:{xuan2(Q);break;}
+	    case 3:{xuan4(Q);break;}
+		}
+	system("pause");
+	system("cls");
+	}
+	return 0;
+}
